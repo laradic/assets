@@ -1,0 +1,32 @@
+menu:
+  - name: Overview
+    icon: fa fa-eye
+    document: index
+
+  - name: Install & Config
+    icon: fa fa-diamond
+    document: installation
+
+  - name: Usage
+    icon: fa fa-code
+    children:
+      - name: Introduction
+        document: usage/introduction
+
+      - name: Single asset creation
+        document: usage/creating
+
+      - name: Grouping with Builder
+        document: usage/grouping
+
+      - name: Filters
+        document: usage/filters
+
+      - name: Advanced functionality
+        document: usage/advanced-functionality
+
+  - name: Extending
+    icon: fa fa-file-code-o
+    children:
+      - name: Asset Finder
+        document: extending/asset-finder

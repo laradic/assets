@@ -1,0 +1,35 @@
+{
+    "name": "laradic/assets",
+    "description": "Laravel 5 Asset Manager. Fully featured, flexible, extendable and toroughly tested and documented.",
+    "license": "MIT",
+    "authors": [{"name": "Robin Radic", "email": "robin@laradic.nl", "homepage": "http://radic.nl", "role": "Developer"}],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=5.5.9",
+        "laradic/support": "~1.0",
+        "laradic/filesystem": "~1.0",
+        "laradic/dependency-sorter": "~1.0",
+        "kriswallsmith/assetic": "~1.2"
+    },
+    "require-dev": {
+        "laradic/testing": "~1.0",
+        "laradic/phing": "~1.0",
+        "orchestra/testbench": "~3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laradic\\Assets\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Laradic\\Tests\\Assets\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
