@@ -14,7 +14,7 @@ namespace Laradic\Assets\Traits;
  * @package        Laradic\Themes
  * @author         Laradic
  * @copyright      Copyright (c) 2015, Laradic. All rights reserved
- * @mixin \Laradic\Support\ServiceProvider
+ * @mixin \Laradic\ServiceProvider\ServiceProvider
  */
 trait ProvidesAssets
 {

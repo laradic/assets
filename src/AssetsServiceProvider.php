@@ -3,7 +3,7 @@
 namespace Laradic\Assets;
 
 use Illuminate\Contracts\Foundation\Application;
-use Laradic\Support\ServiceProvider;
+use Laradic\ServiceProvider\ServiceProvider;
 
 /**
  * The main service provider
@@ -32,7 +32,7 @@ class AssetsServiceProvider extends ServiceProvider
     ];
 
     protected $aliases = [
-        'laradic.assets'        => \Laradic\Contracts\Assets\Factory::class,
+        'laradic.assets'        => \Laradic\Assets\Contracts\Factory::class,
         'laradic.assets.finder' => AssetFinder::class,
     ];
 

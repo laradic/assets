@@ -4,6 +4,7 @@ subtitle: A quick overview of some features
 author: Laradic
 -->
 
+
 The `laradic/assets` package is a Laravel 5 asset manager. It uses `Assetic`'s filters in order to provide high functionality. 
 It provides a convienient way to handle your assets. 
 
