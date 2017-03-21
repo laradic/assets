@@ -1,8 +1,13 @@
 <?php
 /**
- * Part of the Laradic PHP packages.
+ * Part of the Laradic PHP Packages.
  *
- * License and copyright information bundled with this package in the LICENSE file
+ * Copyright (c) 2017. Robin Radic.
+ *
+ * The license can be found in the package and online at https://laradic.mit-license.org.
+ *
+ * @copyright Copyright 2017 (c) Robin Radic
+ * @license https://laradic.mit-license.org The MIT License
  */
 namespace Laradic\Assets\Assetic;
 
@@ -11,8 +16,8 @@ use Assetic\Filter\FilterInterface;
 use Assetic\Filter\HashableInterface;
 use Laradic\Assets\Builder\Group;
 use Laradic\Assets\Compiler\CompiledCollection;
-use Laradic\Contracts\Assets\Factory as FactoryContract;
-use Laradic\Contracts\Dependencies\Dependable;
+use Laradic\Assets\Contracts\Factory as FactoryContract;
+use Laradic\DependencySorter\Dependable;
 
 /**
  * This is the class Asset.
@@ -111,12 +116,12 @@ class Asset extends FileAsset implements Dependable, AssetInterface
     /**
      * Compile this asset
      *
-     * @return \Laradic\Assets\Compiler\Compiled|\Laradic\Assets\Compiler\CompiledCollection
+     * @return \Laradic\Assets\Compiler\CompiledAsset|\Laradic\Assets\Compiler\CompiledCollection
      */
-    public function compile()
+    public function compile($force = false)
     {
         if (!isset($this->compiled)) {
-            $this->compiled = $this->factory->getCompiler()->compile($this);
+            $this->compiled = $this->factory->getCompiler()->compile($this,$force);
         }
 
         return $this->compiled;

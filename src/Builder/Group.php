@@ -1,8 +1,13 @@
 <?php
 /**
- * Part of the Laradic PHP packages.
+ * Part of the Laradic PHP Packages.
  *
- * License and copyright information bundled with this package in the LICENSE file
+ * Copyright (c) 2017. Robin Radic.
+ *
+ * The license can be found in the package and online at https://laradic.mit-license.org.
+ *
+ * @copyright Copyright 2017 (c) Robin Radic
+ * @license https://laradic.mit-license.org The MIT License
  */
 namespace Laradic\Assets\Builder;
 
@@ -12,9 +17,9 @@ use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 use Laradic\Assets\Assetic\AssetInterface;
-use Laradic\Contracts\Assets\Factory as FactoryContract;
-use Laradic\Contracts\Dependencies\Dependable;
-use Laradic\Dependencies\Sorter;
+use Laradic\Assets\Contracts\Factory as FactoryContract;
+use Laradic\DependencySorter\Dependable;
+use Laradic\DependencySorter\Sorter;
 use Laradic\Filesystem\Filesystem;
 use Laradic\Support\Str;
 
@@ -47,28 +52,28 @@ class Group implements Dependable, BuilderInterface
      *
      * @var array
      */
-    protected $filters = [ ];
+    protected $filters = [];
 
     /**
      * The added scripts
      *
      * @var array
      */
-    protected $scripts = [ ];
+    protected $scripts = [];
 
     /**
      * The added styles
      *
      * @var array
      */
-    protected $styles = [ ];
+    protected $styles = [];
 
     /**
      * The dependencies this group has (other groups)=
      *
      * @var array
      */
-    protected $dependencies = [ ];
+    protected $dependencies = [];
 
 
     protected $sorter;
@@ -121,7 +126,7 @@ class Group implements Dependable, BuilderInterface
 
         #properties
         $id,
-        $dependencies = [ ]
+        $dependencies = []
     )
     {
         $this->factory = $factory;
@@ -144,7 +149,7 @@ class Group implements Dependable, BuilderInterface
      *
      * @return \Laradic\Assets\Builder\Group
      */
-    public function group($id, $dependencies = [ ], $default = false)
+    public function group($id, $dependencies = [], $default = false)
     {
         return $this->area->group($id, $dependencies, $default);
     }
@@ -160,17 +165,13 @@ class Group implements Dependable, BuilderInterface
      */
     public function addFilter($extension, $callback)
     {
-        if ( is_string($callback) )
-        {
-            $callback = function () use ($callback)
-            {
+        if (is_string($callback)) {
+            $callback = function () use ($callback) {
 
 
                 return new $callback;
             };
-        }
-        elseif ( !$callback instanceof Closure )
-        {
+        } elseif (!$callback instanceof Closure) {
             throw new InvalidArgumentException('Callback is not a closure or reference string.');
         }
         $this->filters[ $extension ][] = $callback;
@@ -187,13 +188,11 @@ class Group implements Dependable, BuilderInterface
      */
     public function getFilters($extension)
     {
-        $filters = [ ];
-        if ( !array_key_exists($extension, $this->filters) )
-        {
-            return [ ];
+        $filters = [];
+        if (!array_key_exists($extension, $this->filters)) {
+            return [];
         }
-        foreach ( $this->filters[ $extension ] as $cb )
-        {
+        foreach ($this->filters[ $extension ] as $cb) {
             $filters[] = new $cb();
         }
 
@@ -205,47 +204,73 @@ class Group implements Dependable, BuilderInterface
      *
      * @param       $handle
      * @param null  $path
-     * @param array $dependencies
+     * @param array $depends
      *
      * @return $this
      */
-    public function add($handle, $path = null, $dependencies = [ ])
+    public function add($handle, $path = null, $depends = [])
     {
         # 'cast' to array
-        if ( is_string($dependencies) )
-        {
-            $dependencies = [ $dependencies ];
+        if (is_string($depends)) {
+            $depends = [ $depends ];
         }
 
         # resolve asset instance and handle
-        if ( $handle instanceof AssetInterface )
-        {
+        if ($handle instanceof AssetInterface) {
             $asset  = $handle;
             $handle = $asset->getHandle();
-        }
-        elseif ( !is_null($path) )
-        {
-            $asset = $this->factory->create($handle, $path, $dependencies);
-        }
-        else
-        {
+        } elseif (!is_null($path)) {
+            $asset = $this->factory->create($handle, $path, $depends);
+        } else {
             throw new \InvalidArgumentException("Parameter path was null: $path");
         }
         $asset->setGroup($this);
 
         $type = $asset->getType();
 
-        $asset->setDependencies($dependencies);
+        if($this->has($type, $handle)){
+            throw new \LogicException("Could not add asset. Asset [{$handle}] already exists in group [{$this->id}].");
+        }
 
-        $this->{"{$type}s"}[ $handle ] = [
-            'handle'  => $handle,
-            'asset'   => $asset,
-            'type'    => $type,
-            'depends' => $dependencies
-        ];
+        $asset->setDependencies($depends);
+
+        $this->{"{$type}s"}[ $handle ] = compact('handle', 'asset', 'type', 'depends');
 
         return $this;
     }
+
+    public function replace($handle, $path = null, $depends = [])
+    {
+        $type = $this->factory->resolveType($path);
+
+        if ($handle instanceof AssetInterface) {
+            $handle = $handle->getHandle();
+        }
+
+        if (false === $this->has($type, $handle)) {
+            throw new \LogicException("Could not replace asset. Asset [{$handle}] does not exist in group [{$this->id}].");
+        }
+
+        $this->remove($type, $handle);
+        $this->add($handle, $path, $depends);
+
+        return $this;
+    }
+
+    public function remove($type, $handle)
+    {
+        if (false === $this->has($type, $handle)) {
+            throw new \LogicException("Could not remove asset. Asset [{$handle}] does not exist in group [{$this->id}].");
+        }
+        unset($this->{"{$type}s"}[$handle]);
+        return $this;
+    }
+
+    public function has($type, $handle)
+    {
+        return array_key_exists($handle, $this->{"{$type}s"});
+    }
+
 
     /**
      * getAsset method
@@ -284,17 +309,14 @@ class Group implements Dependable, BuilderInterface
     public function getSortedAssets($type, array $only = null)
     {
         $sorter = new Sorter();
-        foreach ( $this->{"{$type}"} as $handle => $assetData )
-        {
-            if ( $only !== null && in_array($handle, $only, true) )
-            {
+        foreach ($this->{"{$type}"} as $handle => $assetData) {
+            if ($only !== null && in_array($handle, $only, true)) {
                 continue;
             }
             $sorter->addItem($assetData[ 'asset' ]);
         }
-        $assets = [ ];
-        foreach ( $sorter->sort() as $handle )
-        {
+        $assets = [];
+        foreach ($sorter->sort() as $handle) {
             $assets[] = $this->getAsset(Str::singular($type), $handle);
         }
 
@@ -360,8 +382,7 @@ class Group implements Dependable, BuilderInterface
     public function getCacheKey($type)
     {
         $key = md5($this->id . $type);
-        foreach ( $this->filters as $filter )
-        {
+        foreach ($this->filters as $filter) {
             $key .= $filter instanceof HashableInterface ? $filter->hash() : serialize($filter);
         }
 

@@ -13,9 +13,18 @@
         "kriswallsmith/assetic": "~1.2"
     },
     "require-dev": {
-        "laradic/testing": "~1.0",
-        "laradic/phing": "~1.0",
-        "orchestra/testbench": "~3.2"
+        "laradic/testing": "~1.0.1",
+        "mockery/mockery": "0.9.*",
+        "phpunit/phpunit": "~4.8 || ^5.6",
+
+        "leafo/lessphp": "^0.3.7",
+        "leafo/scssphp": "~0.1",
+        "meenie/javascript-packer": "^1.1",
+        "mrclay/minify": "<2.3",
+        "natxet/cssmin": "3.0.4",
+        "patchwork/jsqueeze": "~1.0|~2.0",
+        "ptachoire/cssembed": "~1.0",
+        "twig/twig": "~1.23|~2.0"
     },
     "autoload": {
         "psr-4": {

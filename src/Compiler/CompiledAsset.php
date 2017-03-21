@@ -1,5 +1,16 @@
 <?php
 /**
+ * Part of the Laradic PHP Packages.
+ *
+ * Copyright (c) 2017. Robin Radic.
+ *
+ * The license can be found in the package and online at https://laradic.mit-license.org.
+ *
+ * @copyright Copyright 2017 (c) Robin Radic
+ * @license https://laradic.mit-license.org The MIT License
+ */
+
+/**
  * Created by IntelliJ IDEA.
  * User: radic
  * Date: 12/31/15
@@ -13,7 +24,7 @@ use Laradic\Assets\Assetic\AssetInterface;
 use Laradic\Assets\Helper;
 use Laradic\Support\Path;
 
-class Compiled
+class CompiledAsset
 {
     /**
      * The instance of the compiled asset
@@ -56,7 +67,7 @@ class Compiled
      * @param \Laradic\Assets\Assetic\AssetInterface $asset
      * @param                                        $path
      *
-     * @return \Laradic\Assets\Compiler\Compiled
+     * @return \Laradic\Assets\Compiler\CompiledAsset
      */
     public static function make(AssetInterface $asset, $path)
     {

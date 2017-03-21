@@ -1,5 +1,16 @@
 <?php
 /**
+ * Part of the Laradic PHP Packages.
+ *
+ * Copyright (c) 2017. Robin Radic.
+ *
+ * The license can be found in the package and online at https://laradic.mit-license.org.
+ *
+ * @copyright Copyright 2017 (c) Robin Radic
+ * @license https://laradic.mit-license.org The MIT License
+ */
+
+/**
  * Created by IntelliJ IDEA.
  * User: radic
  * Date: 12/31/15
@@ -10,7 +21,7 @@ namespace Laradic\Assets\Compiler;
 
 use Illuminate\Contracts\Cache\Repository;
 use Laradic\Assets\Assetic\AssetInterface;
-use Laradic\Contracts\Assets\Factory as FactoryContract;
+use Laradic\Assets\Contracts\Factory as FactoryContract;
 use Laradic\Filesystem\Filesystem;
 use Laradic\Support\Path;
 use Laradic\Support\Str;
@@ -36,7 +47,7 @@ class Compiler
     /** @var \Laradic\Support\Filesystem */
     protected $fs;
 
-    /** @var \Laradic\Contracts\Assets\AssetFactory|\Laradic\Contracts\Assets\Factory|\Laradic\Assets\Factory */
+    /** @var \Laradic\Assets\Contracts\Factory|\Laradic\Assets\Factory*/
     protected $factory;
 
     /**
@@ -144,7 +155,7 @@ class Compiler
      * @param \Laradic\Assets\Assetic\AssetInterface $asset
      * @param bool                                   $force
      *
-     * @return \Laradic\Assets\Compiler\Compiled
+     * @return \Laradic\Assets\Compiler\CompiledAsset
      */
     public function compile(AssetInterface $asset, $force = false)
     {
@@ -161,7 +172,7 @@ class Compiler
         if ($this->debugging()) {
             $path = $asset->getSourceDirectory() . DIRECTORY_SEPARATOR . $asset->getSourcePath();
         }
-        return Compiled::make($asset, $path);
+        return CompiledAsset::make($asset, $path);
     }
 
     /**

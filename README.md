@@ -18,6 +18,20 @@ Installation
 composer require laradic/assets "~1.0"
 ```
 
+Alternatively, for some of the Assetic filters to work you might need one of the following:
+```JSON
+{
+        "leafo/lessphp": "^0.3.7",
+        "leafo/scssphp": "~0.1",
+        "meenie/javascript-packer": "^1.1",
+        "mrclay/minify": "<2.3",
+        "natxet/cssmin": "3.0.4",
+        "patchwork/jsqueeze": "~1.0|~2.0",
+        "ptachoire/cssembed": "~1.0",
+        "twig/twig": "~1.23|~2.0"
+}
+```
+
 
 Documentation
 -------------

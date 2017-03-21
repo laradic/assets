@@ -1,5 +1,16 @@
 <?php
 /**
+ * Part of the Laradic PHP Packages.
+ *
+ * Copyright (c) 2017. Robin Radic.
+ *
+ * The license can be found in the package and online at https://laradic.mit-license.org.
+ *
+ * @copyright Copyright 2017 (c) Robin Radic
+ * @license https://laradic.mit-license.org The MIT License
+ */
+
+/**
  * Created by IntelliJ IDEA.
  * User: radic
  * Date: 12/31/15
@@ -10,8 +21,8 @@ namespace Laradic\Assets\Builder;
 
 use Illuminate\Contracts\Container\Container;
 use Laradic\Assets\Compiler\CompiledCollection;
-use Laradic\Contracts\Assets\Factory;
-use Laradic\Dependencies\Sorter;
+use Laradic\Assets\Contracts\Factory;
+use Laradic\DependencySorter\Sorter;
 
 
 class Area implements BuilderInterface
@@ -38,7 +49,7 @@ class Area implements BuilderInterface
     protected $defaultGroups = [ ];
 
     /**
-     * @var \Laradic\Contracts\Assets\Factory|\Laradic\Assets\Factory
+     * @var \Laradic\Assets\Contracts\Factory|\Laradic\Assets\Factory
      */
     protected $factory;
 
@@ -50,7 +61,7 @@ class Area implements BuilderInterface
     /**
      * GroupContainer constructor.
      *
-     * @param \Laradic\Contracts\Assets\Factory|\Laradic\Assets\Factory      $factory
+     * @param \Laradic\Assets\Contracts\Factory|\Laradic\Assets\Factory      $factory
      * @param \Illuminate\Contracts\Container\Container                      $container
      * @param                                                                $id
      */

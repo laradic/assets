@@ -1,14 +1,19 @@
 <?php
 /**
- * Part of the Laradic PHP packages.
+ * Part of the Laradic PHP Packages.
  *
- * License and copyright information bundled with this package in the LICENSE file
+ * Copyright (c) 2017. Robin Radic.
+ *
+ * The license can be found in the package and online at https://laradic.mit-license.org.
+ *
+ * @copyright Copyright 2017 (c) Robin Radic
+ * @license https://laradic.mit-license.org The MIT License
  */
 namespace Laradic\Assets\Assetic;
 
 use Laradic\Assets\Builder\Group;
 use Laradic\Assets\Compiler\CompiledCollection;
-use Laradic\Contracts\Assets\Factory as FactoryContract;
+use Laradic\Assets\Contracts\Factory as FactoryContract;
 
 /**
  * This is the class AssetCollection.
@@ -52,7 +57,7 @@ class AssetCollection extends \Assetic\Asset\AssetCollection implements AssetInt
     /**
      * compile method
      *
-     * @return \Laradic\Assets\Compiler\Compiled|\Laradic\Assets\Compiler\CompiledCollection
+     * @return \Laradic\Assets\Compiler\CompiledAsset|\Laradic\Assets\Compiler\CompiledCollection
      */
     public function compile()
     {
