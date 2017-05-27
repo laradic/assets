@@ -1,8 +1,13 @@
 <?php
 /**
- * Part of the Laradic PHP packages.
+ * Part of the Laradic PHP Packages.
  *
- * License and copyright information bundled with this package in the LICENSE file
+ * Copyright (c) 2017. Robin Radic.
+ *
+ * The license can be found in the package and online at https://laradic.mit-license.org.
+ *
+ * @copyright Copyright 2017 (c) Robin Radic
+ * @license https://laradic.mit-license.org The MIT License
  */
 namespace Laradic\Assets;
 
@@ -81,7 +86,7 @@ class Factory implements FactoryContract
     protected $url;
 
     /**
-     * @var \Laradic\Contracts\Assets\AssetFinder
+     * @var \Laradic\Assets\Contracts\AssetFinder
      */
     protected $finder;
 
@@ -90,6 +95,34 @@ class Factory implements FactoryContract
      */
     protected $resolver;
 
+    /**
+     * @var string
+     */
+    protected $assetClass = '\Laradic\Assets\Assetic\Asset';
+
+    /**
+     * @var string
+     */
+    protected $collectionClass = '\Laradic\Assets\Assetic\AssetCollection';
+
+    /**
+     * @var string
+     */
+    protected $areaClass = '\Laradic\Assets\Builder\Area';
+
+    /**
+     * @var string
+     */
+    protected $compilerClass = '\Laradic\Assets\Compiler\Compiler';
+
+    /**
+     * Factory constructor.
+     *
+     * @param \Illuminate\Contracts\Container\Container  $container
+     * @param \Illuminate\Filesystem\Filesystem          $files
+     * @param \Illuminate\Contracts\Routing\UrlGenerator $url
+     * @param \Laradic\Assets\Contracts\AssetFinder      $finder
+     */
     public function __construct(Container $container, Filesystem $files, UrlGenerator $url, AssetFinderContract $finder)
     {
         $this->container = $container;
@@ -111,7 +144,8 @@ class Factory implements FactoryContract
     public function create($handle, $path, array $dependencies = [ ])
     {
         $path  = $this->getPath($path);
-        $asset = $this->container->make('laradic.assets.asset', compact('handle', 'path', 'dependencies'));
+        /** @var \Laradic\Assets\Assetic\Asset $asset */
+        $asset = new $this->assetClass($this, $handle, $path, $dependencies);
         foreach ( $this->getGlobalFilters($asset->getExt()) as $filter ) {
             $asset->ensureFilter($filter);
         }
@@ -128,7 +162,8 @@ class Factory implements FactoryContract
      */
     public function createCollection(array $assets = [ ])
     {
-        return $this->container->make('laradic.assets.collection', compact('assets'));
+        return new $this->collectionClass($this, $assets);
+//        return $this->container->make('laradic.assets.collection', compact('assets'));
     }
 
     /**
@@ -195,7 +230,7 @@ class Factory implements FactoryContract
     public function area($id)
     {
         if ( !array_key_exists($id, $this->areas) ) {
-            $this->areas[ $id ] = $this->container->make('laradic.assets.builder.area', compact('id'));
+            $this->areas[ $id ] = new $this->areaClass($this->container, $this, $id);
         }
 
         return $this->areas[ $id ];

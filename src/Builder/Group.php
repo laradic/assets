@@ -9,6 +9,7 @@
  * @copyright Copyright 2017 (c) Robin Radic
  * @license https://laradic.mit-license.org The MIT License
  */
+
 namespace Laradic\Assets\Builder;
 
 use Assetic\Filter\HashableInterface;
@@ -76,6 +77,7 @@ class Group implements Dependable, BuilderInterface
     protected $dependencies = [];
 
 
+    /** @var */
     protected $sorter;
 
     /**
@@ -114,30 +116,13 @@ class Group implements Dependable, BuilderInterface
      * @param                                                                          $id
      * @param array                                                                    $dependencies
      */
-    public function __construct(
-        #parents
-        FactoryContract $factory,
-        Area $area,
-
-        #resolve
-        Container $container,
-        Repository $cache,
-        Filesystem $files,
-
-        #properties
-        $id,
-        $dependencies = []
-    )
+    public function __construct(FactoryContract $factory, Container $container, Repository $cache, Filesystem $files)
     {
         $this->factory = $factory;
-        $this->area    = $area;
 
         $this->container = $container;
         $this->cache     = $cache;
         $this->files     = $files;
-
-        $this->id           = $id;
-        $this->dependencies = $dependencies;
     }
 
     /**
@@ -228,7 +213,7 @@ class Group implements Dependable, BuilderInterface
 
         $type = $asset->getType();
 
-        if($this->has($type, $handle)){
+        if ($this->has($type, $handle)) {
             throw new \LogicException("Could not add asset. Asset [{$handle}] already exists in group [{$this->id}].");
         }
 
@@ -239,6 +224,15 @@ class Group implements Dependable, BuilderInterface
         return $this;
     }
 
+    /**
+     * replace method
+     *
+     * @param       $handle
+     * @param null  $path
+     * @param array $depends
+     *
+     * @return $this
+     */
     public function replace($handle, $path = null, $depends = [])
     {
         $type = $this->factory->resolveType($path);
@@ -257,15 +251,32 @@ class Group implements Dependable, BuilderInterface
         return $this;
     }
 
+    /**
+     * remove method
+     *
+     * @param $type
+     * @param $handle
+     *
+     * @return $this
+     */
     public function remove($type, $handle)
     {
         if (false === $this->has($type, $handle)) {
             throw new \LogicException("Could not remove asset. Asset [{$handle}] does not exist in group [{$this->id}].");
         }
-        unset($this->{"{$type}s"}[$handle]);
+        unset($this->{"{$type}s"}[ $handle ]);
         return $this;
     }
 
+
+    /**
+     * has method
+     *
+     * @param $type
+     * @param $handle
+     *
+     * @return bool
+     */
     public function has($type, $handle)
     {
         return array_key_exists($handle, $this->{"{$type}s"});
@@ -434,6 +445,6 @@ class Group implements Dependable, BuilderInterface
 
     public function __toString()
     {
-        return '';
+        return (string) $this->getHandle();
     }
 }

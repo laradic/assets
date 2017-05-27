@@ -45,6 +45,14 @@ Quick glance
 The `laradic/assets` package is a Laravel 5 asset manager. It uses `Assetic`'s filters in order to provide high functionality. 
 It provides a convienient way to handle your assets. 
 
+
+#### Overview
+- A single `Asset` can be defined and compiled
+- Compiling will run all configured filters on the asset and write the result to the `cache_path`. Returns an instance of `Compiler\Compiled`
+- `Asset`s can be `Group`ed inside `Area`s. You could consider `Area` to be a 'group of groups'. You could for example create `package-name/frontend` and `package-name/admin`.  
+- To use `Group`s, you will have to define at least 1 `Area`
+
+
 #### Creation
 This will make a `Asset` instance based on the given params. See the `Asset` documentation for posibilities.
 ```php

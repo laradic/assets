@@ -18,6 +18,7 @@ namespace Laradic\Assets\Compiler;
  * @package        Laradic\Assets
  * @author         Laradic
  * @copyright      Copyright (c) 2015, Laradic. All rights reserved
+ * @mixin \Illuminate\Support\Collection
  */
 class CompiledCollection
 {

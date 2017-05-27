@@ -1,4 +1,14 @@
 <?php
+/**
+ * Part of the Laradic PHP Packages.
+ *
+ * Copyright (c) 2017. Robin Radic.
+ *
+ * The license can be found in the package and online at https://laradic.mit-license.org.
+ *
+ * @copyright Copyright 2017 (c) Robin Radic
+ * @license https://laradic.mit-license.org The MIT License
+ */
 
 namespace Laradic\Assets;
 
@@ -20,10 +30,6 @@ class AssetsServiceProvider extends ServiceProvider
     protected $configFiles = [ 'laradic.assets' ];
 
     protected $bindings = [
-        'laradic.assets.asset'         => Assetic\Asset::class,
-        'laradic.assets.collection'    => Assetic\AssetCollection::class,
-        'laradic.assets.builder.area'  => Builder\Area::class,
-        'laradic.assets.builder.group' => Builder\Group::class,
         'laradic.assets.compiler'      => Compiler\Compiler::class,
     ];
 

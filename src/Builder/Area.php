@@ -25,6 +25,12 @@ use Laradic\Assets\Contracts\Factory;
 use Laradic\DependencySorter\Sorter;
 
 
+/**
+ * This is the class Area.
+ *
+ * @package Laradic\Assets\Builder
+ * @author  Robin Radic
+ */
 class Area implements BuilderInterface
 {
     /**
@@ -39,14 +45,14 @@ class Area implements BuilderInterface
      *
      * @var array
      */
-    protected $groups = [ ];
+    protected $groups = [];
 
     /**
      * Contains a list of group id's that will be compiled if the compile method is called without defining any groups.
      *
      * @var array
      */
-    protected $defaultGroups = [ ];
+    protected $defaultGroups = [];
 
     /**
      * @var \Laradic\Assets\Contracts\Factory|\Laradic\Assets\Factory
@@ -57,6 +63,8 @@ class Area implements BuilderInterface
      * @var \Illuminate\Contracts\Container\Container
      */
     protected $container;
+
+    protected $groupClass = Group::class;
 
     /**
      * GroupContainer constructor.
@@ -85,19 +93,26 @@ class Area implements BuilderInterface
     /**
      * Defines / Gets a group
      *
-     * @param string|mixed      $id
-     * @param array $dependencies
-     * @param bool  $default - If true, the group will be added to the defaultGroups property, see docs there for more info
+     * @param string|mixed $id
+     * @param array        $dependencies
+     * @param bool         $default - If true, the group will be added to the defaultGroups property, see docs there for more info
      *
      * @return \Laradic\Assets\Builder\Group
      */
-    public function group($id, $dependencies = [ ], $default = false)
+    public function group($id, $dependencies = [], $default = false)
     {
         if (!array_key_exists($id, $this->groups)) {
-            $this->groups[ $id ] = $this->container->make('laradic.assets.builder.group', [
-                'area' => $this,
-                'id'   => $id
-            ]);
+            $this->groups[ $id ] = $this->container->make($this->groupClass);
+
+            $reflection   = new \ReflectionObject($this->groups[ $id ]);
+            $areaProperty = $reflection->getProperty('area');
+            $idProperty   = $reflection->getProperty('id');
+            $areaProperty->setAccessible(true);
+            $idProperty->setAccessible(true);
+            $this->groups[ $id ]->area = $this;
+            $this->groups[ $id ]->id   = $id;
+            $areaProperty->setAccessible(false);
+            $idProperty->setAccessible(false);
         }
 
         /** @var Group $group */
@@ -137,9 +152,9 @@ class Area implements BuilderInterface
     {
         $compiler     = $this->factory->getCompiler();
         $sortedGroups = $this->getSortedGroups($groups);
-        $assets       = [ ];
+        $assets       = [];
         foreach ($sortedGroups as $group) {
-        /** @var Group $group */
+            /** @var Group $group */
             $assets = array_merge($assets, $group->getSortedAssets($type));
         }
 
@@ -186,7 +201,7 @@ class Area implements BuilderInterface
             $sorter->addItem($group);
         }
 
-        $sortedGroups = [ ];
+        $sortedGroups = [];
         foreach ($sorter->sort() as $handle) {
             $sortedGroups[] = $groups[ $handle ];
         }

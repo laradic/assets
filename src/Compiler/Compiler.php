@@ -129,9 +129,9 @@ class Compiler
             $name  = $asset->getHandle();
             $ext   = $asset->getExt();
             $path  = Str::replace("{$area}_{$group}_{$name}.{$ext}", DIRECTORY_SEPARATOR, '-');
-            $path  = Path::join($cachePath, $path);
+            $path  = path_join($cachePath, $path);
         } else {
-            $path = Path::join($cachePath, $asset->getSourcePath());
+            $path = path_join($cachePath, $asset->getSourcePath());
         }
 
         return $path;
@@ -189,7 +189,7 @@ class Compiler
             $assets = [ $this->collection($assets) ];
         }
 
-        $compiled = CompiledCollection::make();
+        $compiled = new CompiledCollection;
 
         foreach ($assets as $asset) {
             $compiled->push($this->compile($asset));
