@@ -109,10 +109,8 @@ class Area implements BuilderInterface
             $idProperty   = $reflection->getProperty('id');
             $areaProperty->setAccessible(true);
             $idProperty->setAccessible(true);
-            $this->groups[ $id ]->area = $this;
-            $this->groups[ $id ]->id   = $id;
-            $areaProperty->setAccessible(false);
-            $idProperty->setAccessible(false);
+            $areaProperty->setValue($this->groups[ $id ], $this);
+            $idProperty->setValue($this->groups[ $id ], $id);
         }
 
         /** @var Group $group */

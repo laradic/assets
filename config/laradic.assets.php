@@ -27,6 +27,7 @@ return [
         'css'  => [
             #  Assetic\Filter\CssImportFilter::class,
             Laradic\Assets\Filters\UriRewriteFilter::class,
+            Assetic\Filter\CssMinFilter::class
         ],
         'scss' => [
             # Assetic\Filter\ScssphpFilter::class,

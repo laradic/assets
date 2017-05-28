@@ -71,7 +71,7 @@ class CompiledAsset
      */
     public static function make(AssetInterface $asset, $path)
     {
-        return app()->make(static::class, compact('asset', 'path'));
+        return app()->makeWith(static::class, compact('asset', 'path'));
     }
 
     /**

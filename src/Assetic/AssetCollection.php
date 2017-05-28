@@ -109,8 +109,8 @@ class AssetCollection extends \Assetic\Asset\AssetCollection implements AssetInt
      */
     public function getExt()
     {
-        return head($this->all())->getExt();
-        #return $this->getType() === 'style' ? 'css' : 'js';
+//        return head($this->all())->getExt();
+        return $this->getType() === 'style' ? 'css' : 'js';
     }
 
     /**
