@@ -141,11 +141,11 @@ interface Factory
     /**
      * Returns the url to the asset. Uses the AssetFinder to retreive the path with the given key
      *
-     * @param $key
+     * @param $path
      *
      * @return string
      */
-    public function getUrl($key);
+    public function getUrl($path);
 
     /**
      * Returns the uri to the asset. Uses the AssetFinder to retreive the path with the given key

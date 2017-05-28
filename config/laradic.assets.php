@@ -11,10 +11,15 @@
  */
 
 return [
-    'debug'       => null, // if null, app.debug will be used
+    // if true, assets will not be concenated and filters will be ignored resulting in  a <script> or <link> for each asset pointing to the original location.
+    // if null, app.debug value will be used
+    // can be set during runtime (not recommended) aswell using Asset::setDebug($val)
+    'debug'       => null,
 
-    // paths relative to public folder
+    // asset_paths are relative to the public folder
     'asset_paths' => [ 'assets' ],
+
+    // cache_path is relative to public folder
     'cache_path'  => 'cache/assets',
 
     'types' => [

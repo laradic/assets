@@ -23,6 +23,7 @@ use Illuminate\Contracts\Container\Container;
 use Laradic\Assets\Compiler\CompiledCollection;
 use Laradic\Assets\Contracts\Factory;
 use Laradic\DependencySorter\Sorter;
+use Laradic\Support\Contracts\Stringable;
 
 
 /**
@@ -31,7 +32,7 @@ use Laradic\DependencySorter\Sorter;
  * @package Laradic\Assets\Builder
  * @author  Robin Radic
  */
-class Area implements BuilderInterface
+class Area implements BuilderInterface, Stringable
 {
     /**
      * The unique id
@@ -205,5 +206,15 @@ class Area implements BuilderInterface
         }
 
         return $sortedGroups;
+    }
+
+    /**
+     * toString method
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->id;
     }
 }

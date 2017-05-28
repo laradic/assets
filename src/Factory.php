@@ -7,8 +7,9 @@
  * The license can be found in the package and online at https://laradic.mit-license.org.
  *
  * @copyright Copyright 2017 (c) Robin Radic
- * @license https://laradic.mit-license.org The MIT License
+ * @license   https://laradic.mit-license.org The MIT License
  */
+
 namespace Laradic\Assets;
 
 use Illuminate\Contracts\Container\Container;
@@ -35,6 +36,8 @@ class Factory implements FactoryContract
 {
     use Macroable;
 
+    //#region: Properties
+
     /**
      * Debug switch, if null then app.debug config will be used.
      *
@@ -47,7 +50,7 @@ class Factory implements FactoryContract
      *
      * @var array
      */
-    protected $types = [ ];
+    protected $types = [];
 
     /**
      * Cache directory path, relative to public_path
@@ -61,14 +64,14 @@ class Factory implements FactoryContract
      *
      * @var array
      */
-    protected $areas = [ ];
+    protected $areas = [];
 
     /**
      * Global filters that should be applied on all AssetInterfaces
      *
      * @var array
      */
-    protected $globalFilters = [ ];
+    protected $globalFilters = [];
 
     /**
      * @var \Illuminate\Contracts\Container\Container
@@ -115,6 +118,8 @@ class Factory implements FactoryContract
      */
     protected $compilerClass = '\Laradic\Assets\Compiler\Compiler';
 
+    //#endregion
+
     /**
      * Factory constructor.
      *
@@ -141,12 +146,12 @@ class Factory implements FactoryContract
      *
      * @return Asset
      */
-    public function create($handle, $path, array $dependencies = [ ])
+    public function create($handle, $path, array $dependencies = [])
     {
-        $path  = $this->getPath($path);
+        $path = $this->getPath($path);
         /** @var \Laradic\Assets\Assetic\Asset $asset */
         $asset = new $this->assetClass($this, $handle, $path, $dependencies);
-        foreach ( $this->getGlobalFilters($asset->getExt()) as $filter ) {
+        foreach ($this->getGlobalFilters($asset->getExt()) as $filter) {
             $asset->ensureFilter($filter);
         }
 
@@ -160,14 +165,14 @@ class Factory implements FactoryContract
      *
      * @return AssetInterface
      */
-    public function createCollection(array $assets = [ ])
+    public function createCollection(array $assets = [])
     {
         return new $this->collectionClass($this, $assets);
 //        return $this->container->make('laradic.assets.collection', compact('assets'));
     }
 
     /**
-     * query method
+     * Resolves the given query to a Area, Group or list of sorted Assets (eg: 'area/name' or 'area/name::group' or 'area/name::group.scripts')
      *
      * @param string $query - The query, wich is actually a NamespacedItemResolver key.
      *
@@ -179,13 +184,13 @@ class Factory implements FactoryContract
 
         $area = $this->area($area);
 
-        if ( $group === null ) {
+        if ($group === null) {
             return $area;
         }
 
         $group = $area->group($group);
 
-        if ( $type === null ) {
+        if ($type === null) {
             return $group;
         }
 
@@ -207,13 +212,13 @@ class Factory implements FactoryContract
 
         $area = $this->area($area);
 
-        if ( $group === null ) {
+        if ($group === null) {
             return $area->compile($type, $combine);
         }
 
         $group = $area->group($group);
 
-        if ( $asset === null ) {
+        if ($asset === null) {
             return $group->compile($type, $combine);
         }
 
@@ -229,47 +234,11 @@ class Factory implements FactoryContract
      */
     public function area($id)
     {
-        if ( !array_key_exists($id, $this->areas) ) {
+        if (!array_key_exists($id, $this->areas)) {
             $this->areas[ $id ] = new $this->areaClass($this->container, $this, $id);
         }
 
         return $this->areas[ $id ];
-    }
-
-    /**
-     * Returns a <script src=""> html string
-     *
-     * @param       $key
-     * @param array $attributes
-     * @param bool  $secure
-     *
-     * @return string
-     */
-    public function script($key, array $attributes = [ ], $secure = false)
-    {
-        return Helper::script($this->getUrl($key), $attributes, $secure);
-    }
-
-    /**
-     * Returns a <link href=""> html string
-     *
-     * @param       $key
-     * @param array $attributes
-     * @param bool  $secure
-     *
-     * @return string
-     */
-    public function style($key, array $attributes = [ ], $secure = false)
-    {
-        return Helper::style($this->getUrl($key), $attributes, $secure);
-    }
-
-    /**
-     * @return \Laradic\Assets\Compiler\Compiler
-     */
-    public function getCompiler()
-    {
-        return $this->container->make('laradic.assets.compiler');
     }
 
     /**
@@ -282,13 +251,13 @@ class Factory implements FactoryContract
      */
     public function addGlobalFilter($extension, $callback)
     {
-        if ( is_string($callback) ) {
+        if (is_string($callback)) {
             $callback = function () use ($callback) {
 
 
                 return new $callback;
             };
-        } elseif ( !$callback instanceof \Closure ) {
+        } elseif (!$callback instanceof \Closure) {
             throw new \InvalidArgumentException('Callback is not a closure or reference string.');
         }
         $this->globalFilters[ $extension ][] = $callback;
@@ -305,11 +274,11 @@ class Factory implements FactoryContract
      */
     public function getGlobalFilters($extension)
     {
-        $filters = [ ];
-        if ( !array_key_exists($extension, $this->globalFilters) ) {
-            return [ ];
+        $filters = [];
+        if (!array_key_exists($extension, $this->globalFilters)) {
+            return [];
         }
-        foreach ( $this->globalFilters[ $extension ] as $cb ) {
+        foreach ($this->globalFilters[ $extension ] as $cb) {
             $filters[] = $cb();
         }
 
@@ -333,21 +302,51 @@ class Factory implements FactoryContract
      */
     public function resolveType(AssetInterface $asset)
     {
-        if ( $asset instanceof AssetCollection ) {
+        if ($asset instanceof AssetCollection) {
             $asset = head($asset->all());
         }
         $ext = pathinfo($asset->getSourcePath(), PATHINFO_EXTENSION);
         $ext = Str::removeLeft(strtolower($ext), '.');
 
 
-        foreach ( $this->types as $type => $types ) {
-            if ( in_array($ext, $types, true) ) {
+        foreach ($this->types as $type => $types) {
+            if (in_array($ext, $types, true)) {
                 return $type;
             }
         }
 
         return 'other';
     }
+
+    /**
+     * Returns a <script src=""> html string
+     *
+     * @param       $key
+     * @param array $attributes
+     * @param bool  $secure
+     *
+     * @return string
+     */
+    public function script($key, array $attributes = [], $secure = false)
+    {
+        return Helper::script($this->getUrl($key), $attributes, $secure);
+    }
+
+    /**
+     * Returns a <link href=""> html string
+     *
+     * @param       $key
+     * @param array $attributes
+     * @param bool  $secure
+     *
+     * @return string
+     */
+    public function style($key, array $attributes = [], $secure = false)
+    {
+        return Helper::style($this->getUrl($key), $attributes, $secure);
+    }
+
+    //#region: Asset finders
 
     /**
      * Returns the absolute path to the asset. Uses the AssetFinder to retreive the path with the given key
@@ -364,17 +363,17 @@ class Factory implements FactoryContract
     /**
      * Returns the url to the asset. Uses the AssetFinder to retreive the path with the given key
      *
-     * @param $key
+     * @param $path
      *
      * @return string
      */
-    public function getUrl($key)
+    public function getUrl($path)
     {
-        return $this->url->asset($this->getUri($key));
+        return $this->url->asset($this->getUri($path));
     }
 
     /**
-     * Returns the uri to the asset. Uses the AssetFinder to retreive the path with the given key
+     * Returns the uri (relative path) to the asset. Uses the AssetFinder to retreive the path with the given key
      *
      * @param $key
      *
@@ -384,6 +383,46 @@ class Factory implements FactoryContract
     {
         return Path::makeRelative($this->getPath($key), public_path());
     }
+
+    /**
+     * Shorthand for getPath(). Returns the absolute path to the asset. Uses the AssetFinder to retreive the path with the given key
+     *
+     * @param $path
+     *
+     * @return mixed
+     */
+    public function path($path)
+    {
+        return $this->getPath($path);
+    }
+
+    /**
+     * Shorthand for getUrl(). Returns the url to the asset. Uses the AssetFinder to retreive the path with the given key
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    public function url($path)
+    {
+        return $this->getUrl($path);
+    }
+
+    /**
+     * Shorthand for getUri(). Returns the uri (relative path) to the asset. Uses the AssetFinder to retreive the path with the given key
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    public function uri($path)
+    {
+        return $this->getUri($path);
+    }
+
+    //#endregion
+
+    //#region: Getters/Setters
 
     /**
      * Returns the cache directory path, relative to the public_path
@@ -404,7 +443,7 @@ class Factory implements FactoryContract
      */
     public function setCachePath($cachePath)
     {
-        if ( !$this->files->exists(public_path($cachePath)) ) {
+        if (!$this->files->exists(public_path($cachePath))) {
             $this->files->makeDirectory(public_path($cachePath), 0755, true);
         }
         $this->cachePath = $cachePath;
@@ -427,7 +466,7 @@ class Factory implements FactoryContract
      */
     public function isDebug()
     {
-        if ( !is_null($this->debug) ) {
+        if (!is_null($this->debug)) {
             return $this->debug;
         }
 
@@ -455,4 +494,14 @@ class Factory implements FactoryContract
 
         return $this;
     }
+
+    /**
+     * @return \Laradic\Assets\Compiler\Compiler
+     */
+    public function getCompiler()
+    {
+        return $this->container->make('laradic.assets.compiler');
+    }
+
+    //#endregion
 }

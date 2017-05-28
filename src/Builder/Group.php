@@ -7,7 +7,7 @@
  * The license can be found in the package and online at https://laradic.mit-license.org.
  *
  * @copyright Copyright 2017 (c) Robin Radic
- * @license https://laradic.mit-license.org The MIT License
+ * @license   https://laradic.mit-license.org The MIT License
  */
 
 namespace Laradic\Assets\Builder;
@@ -22,6 +22,7 @@ use Laradic\Assets\Contracts\Factory as FactoryContract;
 use Laradic\DependencySorter\Dependable;
 use Laradic\DependencySorter\Sorter;
 use Laradic\Filesystem\Filesystem;
+use Laradic\Support\Contracts\Stringable;
 use Laradic\Support\Str;
 
 /**
@@ -31,7 +32,7 @@ use Laradic\Support\Str;
  * @author         Laradic
  * @copyright      Copyright (c) 2015, Laradic. All rights reserved
  */
-class Group implements Dependable, BuilderInterface
+class Group implements Dependable, BuilderInterface, Stringable
 {
 
     /**
@@ -75,7 +76,6 @@ class Group implements Dependable, BuilderInterface
      * @var array
      */
     protected $dependencies = [];
-
 
     /** @var */
     protected $sorter;
@@ -192,6 +192,8 @@ class Group implements Dependable, BuilderInterface
      * @param array $depends
      *
      * @return $this
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
      */
     public function add($handle, $path = null, $depends = [])
     {
@@ -217,11 +219,33 @@ class Group implements Dependable, BuilderInterface
             throw new \LogicException("Could not add asset. Asset [{$handle}] already exists in group [{$this->id}].");
         }
 
+        if ($this->hasAllHandles($depends)) {
+            throw new \InvalidArgumentException("One or more of the given dependencies for Asset [{$this->area}::{$this}.{$handle}] does not exist in this group");
+        }
+
         $asset->setDependencies($depends);
 
         $this->{"{$type}s"}[ $handle ] = compact('handle', 'asset', 'type', 'depends');
 
         return $this;
+    }
+
+    /**
+     * Checks if all handles for the given type exist in the group
+     *
+     * @param       $type
+     * @param array $handles
+     *
+     * @return bool
+     */
+    protected function hasAllHandles($type, $handles = [])
+    {
+        foreach ($handles as $dep) {
+            if (false === $this->has($type, $dep)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -268,7 +292,6 @@ class Group implements Dependable, BuilderInterface
         return $this;
     }
 
-
     /**
      * has method
      *
@@ -281,7 +304,6 @@ class Group implements Dependable, BuilderInterface
     {
         return array_key_exists($handle, $this->{"{$type}s"});
     }
-
 
     /**
      * getAsset method
@@ -390,6 +412,13 @@ class Group implements Dependable, BuilderInterface
         return $this->id;
     }
 
+    /**
+     * getCacheKey method
+     *
+     * @param $type
+     *
+     * @return string
+     */
     public function getCacheKey($type)
     {
         $key = md5($this->id . $type);
@@ -443,8 +472,13 @@ class Group implements Dependable, BuilderInterface
     }
 
 
+    /**
+     * __toString method
+     *
+     * @return string
+     */
     public function __toString()
     {
-        return (string) $this->getHandle();
+        return (string)$this->getHandle();
     }
 }
