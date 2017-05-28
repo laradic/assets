@@ -219,7 +219,7 @@ class Group implements Dependable, BuilderInterface, Stringable
             throw new \LogicException("Could not add asset. Asset [{$handle}] already exists in group [{$this->id}].");
         }
 
-        if ($this->hasAllHandles($depends)) {
+        if (false === $this->hasAllHandles($depends)) {
             throw new \InvalidArgumentException("One or more of the given dependencies for Asset [{$this->area}::{$this}.{$handle}] does not exist in this group");
         }
 
