@@ -36,18 +36,6 @@ class CompiledCollection
     }
 
     /**
-     * make method
-     *
-     * @param array $items
-     *
-     * @return \Laradic\Assets\Compiler\CompiledCollection
-     */
-    public static function make(array $items = [ ])
-    {
-        return app()->make(static::class, compact('items'));
-    }
-
-    /**
      * getHtml method
      *
      * @param bool $secure

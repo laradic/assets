@@ -89,7 +89,7 @@ class AssetCollection extends \Assetic\Asset\AssetCollection implements AssetInt
      */
     public function getHandle()
     {
-        return 'col_';
+        return 'col_' . md5($this->getCacheKey());
     }
 
     /**

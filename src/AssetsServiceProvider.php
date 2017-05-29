@@ -33,6 +33,8 @@ class AssetsServiceProvider extends ServiceProvider
         'laradic.assets.compiler'      => Compiler\Compiler::class,
     ];
 
+
+
     protected $singletons = [
         # 'laradic.assets.finder' => AssetFinder::class
     ];

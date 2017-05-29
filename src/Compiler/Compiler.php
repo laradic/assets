@@ -7,7 +7,7 @@
  * The license can be found in the package and online at https://laradic.mit-license.org.
  *
  * @copyright Copyright 2017 (c) Robin Radic
- * @license https://laradic.mit-license.org The MIT License
+ * @license   https://laradic.mit-license.org The MIT License
  */
 
 /**
@@ -20,10 +20,10 @@
 namespace Laradic\Assets\Compiler;
 
 use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Laradic\Assets\Assetic\AssetInterface;
 use Laradic\Assets\Contracts\Factory as FactoryContract;
 use Laradic\Filesystem\Filesystem;
-use Laradic\Support\Path;
 use Laradic\Support\Str;
 
 /**
@@ -44,24 +44,31 @@ class Compiler
     /** @var \Illuminate\Contracts\Cache\Repository */
     protected $cache;
 
-    /** @var \Laradic\Support\Filesystem */
+    /** @var \Laradic\Filesystem\Filesystem */
     protected $fs;
 
-    /** @var \Laradic\Assets\Contracts\Factory|\Laradic\Assets\Factory*/
+    /** @var \Laradic\Assets\Contracts\Factory|\Laradic\Assets\Factory */
     protected $factory;
+
+    /** @var \Illuminate\Contracts\Routing\UrlGenerator */
+    protected $url;
+
+    protected $compiledAssetClass = CompiledAsset::class;
 
     /**
      * Compiler constructor.
      *
-     * @param \Illuminate\Contracts\Cache\Repository                         $cache
-     * @param \Laradic\Support\Filesystem                                    $fs
-     * @param \Laradic\Contracts\Assets\AssetFactory|\Laradic\Assets\Factory $factory
+     * @param \Illuminate\Contracts\Cache\Repository                                                           $cache
+     * @param \Laradic\Filesystem\Filesystem|\Laradic\Support\Filesystem                                       $fs
+     * @param \Laradic\Assets\Contracts\Factory|\Laradic\Assets\Factory|\Laradic\Assets\Contracts\AssetFactory $factory
+     * @param \Illuminate\Contracts\Routing\UrlGenerator                                                       $url
      */
-    public function __construct(Repository $cache, Filesystem $fs, FactoryContract $factory)
+    public function __construct(Repository $cache, Filesystem $fs, FactoryContract $factory, UrlGenerator $url)
     {
         $this->cache   = $cache;
         $this->fs      = $fs;
         $this->factory = $factory;
+        $this->url     = $url;
     }
 
     /**
@@ -71,21 +78,9 @@ class Compiler
      *
      * @return \Laradic\Assets\Assetic\AssetInterface
      */
-    protected function collection($assets = [ ])
+    protected function collection($assets = [])
     {
         return $this->factory->createCollection($assets);
-    }
-
-    /**
-     * make method
-     *
-     * @param array $assets
-     *
-     * @return \Laradic\Assets\Compiler\Compiler
-     */
-    public static function make($assets = [ ])
-    {
-        return app()->make(static::class);
     }
 
     /**
@@ -172,7 +167,7 @@ class Compiler
         if ($this->debugging()) {
             $path = $asset->getSourceDirectory() . DIRECTORY_SEPARATOR . $asset->getSourcePath();
         }
-        return CompiledAsset::make($asset, $path);
+        return new $this->compiledAssetClass($this->url, $asset, $path); //CompiledAsset::make($asset, $path);
     }
 
     /**
@@ -183,13 +178,14 @@ class Compiler
      *
      * @return \Laradic\Assets\Compiler\CompiledCollection
      */
-    public function compileAssets(array $assets = [ ], $combine = true)
+    public function compileAssets(array $assets = [], $combine = true)
     {
         if (!$this->debugging() && $combine === true) {
             $assets = [ $this->collection($assets) ];
         }
 
         $compiled = new CompiledCollection;
+
 
         foreach ($assets as $asset) {
             $compiled->push($this->compile($asset));

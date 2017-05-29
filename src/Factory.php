@@ -101,22 +101,22 @@ class Factory implements FactoryContract
     /**
      * @var string
      */
-    protected $assetClass = '\Laradic\Assets\Assetic\Asset';
+    protected $assetClass = Asset::class;
 
     /**
      * @var string
      */
-    protected $collectionClass = '\Laradic\Assets\Assetic\AssetCollection';
+    protected $collectionClass = AssetCollection::class;
 
     /**
      * @var string
      */
-    protected $areaClass = '\Laradic\Assets\Builder\Area';
+    protected $areaClass = Builder\Area::class;
 
     /**
      * @var string
      */
-    protected $compilerClass = '\Laradic\Assets\Compiler\Compiler';
+    protected $compilerClass = Compiler\Compiler::class;
 
     //#endregion
 
@@ -500,7 +500,11 @@ class Factory implements FactoryContract
      */
     public function getCompiler()
     {
-        return $this->container->make('laradic.assets.compiler');
+        $comp =  $this->container->make('laradic.assets.compiler');
+
+
+
+        return $comp;
     }
 
     //#endregion

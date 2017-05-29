@@ -24,6 +24,12 @@ use Laradic\Assets\Assetic\AssetInterface;
 use Laradic\Assets\Helper;
 use Laradic\Support\Path;
 
+/**
+ * This is the class CompiledAsset.
+ *
+ * @package Laradic\Assets\Compiler
+ * @author  Robin Radic
+ */
 class CompiledAsset
 {
     /**
@@ -59,19 +65,6 @@ class CompiledAsset
         $this->url   = $url;
         $this->asset = $asset;
         $this->path  = $path;
-    }
-
-    /**
-     * make method
-     *
-     * @param \Laradic\Assets\Assetic\AssetInterface $asset
-     * @param                                        $path
-     *
-     * @return \Laradic\Assets\Compiler\CompiledAsset
-     */
-    public static function make(AssetInterface $asset, $path)
-    {
-        return app()->makeWith(static::class, compact('asset', 'path'));
     }
 
     /**
