@@ -7,7 +7,7 @@ Laradic Assets
 [![Source](http://img.shields.io/badge/source-laradic/assets-blue.svg?style=flat-square)](https://github.com/laradic/assets)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
 
-Laradic Assets is a package for the Laravel 5 framework.
+Laradic Assets is a package for the Laravel 5 framework. It's made for Laravel **5.4+** and PHP **7.0+** .
 
 The package follows the FIG standards PSR-1, PSR-2, and PSR-4 to ensure a high level of interoperability between shared PHP code.
 

@@ -6,7 +6,8 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=7.0.0",
+        "illuminate/support": "~5.4",
         "laradic/support": "~1.0",
         "laradic/filesystem": "~1.0",
         "laradic/dependency-sorter": "~1.0",
@@ -23,8 +24,7 @@
         "mrclay/minify": "<2.3",
         "natxet/cssmin": "3.0.4",
         "patchwork/jsqueeze": "~1.0|~2.0",
-        "ptachoire/cssembed": "~1.0",
-        "twig/twig": "~1.23|~2.0"
+        "ptachoire/cssembed": "~1.0"
     },
     "autoload": {
         "psr-4": {
